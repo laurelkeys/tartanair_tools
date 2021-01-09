@@ -4,7 +4,7 @@
 import numpy as np
 import transformation as tf
 
-def shift0(traj): 
+def shift0(traj):
     '''
     Traj: a list of [t + quat]
     Return: translate and rotate the traj
@@ -25,7 +25,7 @@ def ned2cam(traj):
     T = np.array([[0,1,0,0],
                   [0,0,1,0],
                   [1,0,0,0],
-                  [0,0,0,1]], dtype=np.float32) 
+                  [0,0,0,1]], dtype=np.float32)
     T_inv = np.linalg.inv(T)
     new_traj = []
     traj_ses = tf.pos_quats2SE_matrices(np.array(traj))
@@ -33,7 +33,7 @@ def ned2cam(traj):
     for tt in traj_ses:
         ttt=T.dot(tt).dot(T_inv)
         new_traj.append(tf.SE2pos_quat(ttt))
-        
+
     return np.array(new_traj)
 
 def cam2ned(traj):
@@ -43,7 +43,7 @@ def cam2ned(traj):
     T = np.array([[0,0,1,0],
                   [1,0,0,0],
                   [0,1,0,0],
-                  [0,0,0,1]], dtype=np.float32) 
+                  [0,0,0,1]], dtype=np.float32)
     T_inv = np.linalg.inv(T)
     new_traj = []
     traj_ses = tf.pos_quats2SE_matrices(np.array(traj))
@@ -51,7 +51,7 @@ def cam2ned(traj):
     for tt in traj_ses:
         ttt=T.dot(tt).dot(T_inv)
         new_traj.append(tf.SE2pos_quat(ttt))
-        
+
     return np.array(new_traj)
 
 
@@ -71,7 +71,7 @@ def trajectory_transform(gt_traj, est_traj):
 def rescale_bk(poses_gt, poses):
     motion_gt = tf.pose2motion(poses_gt)
     motion    = tf.pose2motion(poses)
-    
+
     speed_square_gt = np.sum(motion_gt[:,0:3,3]*motion_gt[:,0:3,3],1)
     speed_gt = np.sqrt(speed_square_gt)
     speed_square    = np.sum(motion[:,0:3,3]*motion[:,0:3,3],1)
@@ -102,7 +102,7 @@ def rescale(poses_gt, poses):
     '''
     trans_gt = pose2trans(poses_gt)
     trans    = pose2trans(poses)
-    
+
     speed_square_gt = np.sum(trans_gt*trans_gt,1)
     speed_gt = np.sqrt(speed_square_gt)
     speed_square    = np.sum(trans*trans,1)
@@ -119,12 +119,12 @@ def trajectory_scale(traj, scale):
     for ttt in traj:
         ttt[0:3,3] = ttt[0:3,3]*scale
     return traj
- 
+
 def timestamp_associate(first_list, second_list, max_difference):
     """
-    Associate two trajectory of [stamp,data]. As the time stamps never match exactly, we aim 
+    Associate two trajectory of [stamp,data]. As the time stamps never match exactly, we aim
     to find the closest match for every input tuple.
-    
+
     Input:
     first_list -- first list of (stamp,data)
     second_list -- second list of (stamp,data)
@@ -133,16 +133,16 @@ def timestamp_associate(first_list, second_list, max_difference):
     Output:
     first_res: matched data from the first list
     second_res: matched data from the second list
-    
+
     """
     first_dict = dict([(l[0],l[1:]) for l in first_list if len(l)>1])
     second_dict = dict([(l[0],l[1:]) for l in second_list if len(l)>1])
 
     first_keys = first_dict.keys()
     second_keys = second_dict.keys()
-    potential_matches = [(abs(a - b ), a, b) 
-                         for a in first_keys 
-                         for b in second_keys 
+    potential_matches = [(abs(a - b ), a, b)
+                         for a in first_keys
+                         for b in second_keys
                          if abs(a - b) < max_difference]
     potential_matches.sort()
     matches = []
@@ -151,7 +151,7 @@ def timestamp_associate(first_list, second_list, max_difference):
             first_keys.remove(a)
             second_keys.remove(b)
             matches.append((a, b))
-    
+
     matches.sort()
 
     first_res = []

@@ -34,7 +34,7 @@ def SE2se(SE_data):
     result[0:3] = np.array(SE_data[0:3,3].T)
     result[3:6] = SO2so(SE_data[0:3,0:3]).T
     return result
-    
+
 def SO2so(SO_data):
     return R.from_dcm(SO_data).as_rotvec()
 

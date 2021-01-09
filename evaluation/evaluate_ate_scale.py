@@ -36,7 +36,7 @@
 # ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Requirements: 
+# Requirements:
 # sudo apt-get install python-argparse
 
 """
@@ -48,21 +48,21 @@ import numpy
 
 def align(model,data,calc_scale=False):
     """Align two trajectories using the method of Horn (closed-form).
-    
+
     Input:
     model -- first trajectory (3xn)
     data -- second trajectory (3xn)
-    
+
     Output:
     rot -- rotation matrix (3x3)
     trans -- translation vector (3x1)
     trans_error -- translational error per point (1xn)
-    
+
     """
     numpy.set_printoptions(precision=3,suppress=True)
     model_zerocentered = model - model.mean(1)
     data_zerocentered = data - data.mean(1)
-    
+
     W = numpy.zeros( (3,3) )
     for column in range(model.shape[1]):
         W += numpy.outer(model_zerocentered[:,column],data_zerocentered[:,column])
@@ -80,10 +80,10 @@ def align(model,data,calc_scale=False):
             dots += numpy.dot(data_zerocentered[:,column].transpose(),rotmodel[:,column])
             normi = numpy.linalg.norm(model_zerocentered[:,column])
             norms += normi*normi
-        # s = float(dots/norms)  
+        # s = float(dots/norms)
         s = float(norms/dots)
     else:
-        s = 1.0  
+        s = 1.0
 
     # trans = data.mean(1) - s*rot * model.mean(1)
     # model_aligned = s*rot * model + trans
@@ -94,15 +94,15 @@ def align(model,data,calc_scale=False):
     model_aligned = rot * model + trans
     data_alingned = s * data
     alignment_error = model_aligned - data_alingned
-    
+
     trans_error = numpy.sqrt(numpy.sum(numpy.multiply(alignment_error,alignment_error),0)).A[0]
-        
+
     return rot,trans,trans_error, s
 
 def plot_traj(ax,stamps,traj,style,color,label):
     """
-    Plot a trajectory using matplotlib. 
-    
+    Plot a trajectory using matplotlib.
+
     Input:
     ax -- the plot
     stamps -- time stamps (1xn)
@@ -110,7 +110,7 @@ def plot_traj(ax,stamps,traj,style,color,label):
     style -- line style
     color -- line color
     label -- plot legend
-    
+
     """
     stamps.sort()
     interval = numpy.median([s-t for s,t in zip(stamps[1:],stamps[:-1])])
@@ -129,5 +129,3 @@ def plot_traj(ax,stamps,traj,style,color,label):
         last= stamps[i]
     if len(x)>0:
         ax.plot(x,y,style,color=color,label=label)
-            
-

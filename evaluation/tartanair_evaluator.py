@@ -12,14 +12,14 @@ class TartanAirEvaluator:
         self.ate_eval = ATEEvaluator()
         self.rpe_eval = RPEEvaluator()
         self.kitti_eval = KittiEvaluator()
-        
-    def evaluate_one_trajectory(self, gt_traj_name, est_traj_name, scale=False):
+
+    def evaluate_one_trajectory(self, gt_traj, est_traj, scale=False, kittitype=True):
         """
         scale = True: calculate a global scale
         """
         # load trajectories
-        gt_traj = np.loadtxt(gt_traj_name)
-        est_traj = np.loadtxt(est_traj_name)
+        gt_traj = np.loadtxt(gt_traj)
+        est_traj = np.loadtxt(est_traj)
 
         if gt_traj.shape[0] != est_traj.shape[0]:
             raise Exception("POSEFILE_LENGTH_ILLEGAL")
@@ -32,14 +32,16 @@ class TartanAirEvaluator:
 
         ate_score, gt_ate_aligned, est_ate_aligned = self.ate_eval.evaluate(gt_traj, est_traj, scale)
         rpe_score = self.rpe_eval.evaluate(gt_SEs, est_SEs)
-        kitti_score = self.kitti_eval.evaluate(gt_SEs, est_SEs)
+        kitti_score = self.kitti_eval.evaluate(gt_SEs, est_SEs, kittitype=kittitype)
 
-        return {'ate_score': ate_score, 
-                'rpe_score': rpe_score, 
-                'kitti_score': kitti_score}
+        return {'ate_score': ate_score,
+                'rpe_score': rpe_score,
+                'kitti_score': kitti_score,
+                'gt_aligned': gt_ate_aligned,
+                'est_aligned': est_ate_aligned}
 
 if __name__ == "__main__":
-    
+
     # scale = True for monocular track, scale = False for stereo track
     aicrowd_evaluator = TartanAirEvaluator()
     result = aicrowd_evaluator.evaluate_one_trajectory('pose_gt.txt', 'pose_est.txt', scale=True)

@@ -41,7 +41,7 @@ def translation_error(pose_error):
 #     pose_m = np.matrix(np.eye(4))
 #     pose_m[0:3,:] = pose_line.reshape(3,4)
 #     return pose_m
-    
+
 def calculate_sequence_error(poses_gt,poses_result,lengths=[10,20,30,40,50,60,70,80]):
     # error_vetor
     errors = []
@@ -102,8 +102,11 @@ def calculate_ave_errors(errors,lengths=[10,20,30,40,50,60,70,80]):
             tra_errors.append(sum(tra_error_each_length)/len(tra_error_each_length))
     return np.array(rot_errors)*180/np.pi, tra_errors
 
-def evaluate(gt, data,rescale_=False):
-    lens =  [5,10,15,20,25,30,35,40] #[1,2,3,4,5,6] # 
+def evaluate(gt, data, kittitype=True):
+    if kittitype:
+        lens =  [100,200,300,400,500,600,700,800] #
+    else:
+        lens = [5,10,15,20,25,30,35,40] #[1,2,3,4,5,6] #
     errors = calculate_sequence_error(gt, data, lengths=lens)
     rot,tra = calculate_ave_errors(errors, lengths=lens)
     return np.mean(rot), np.mean(tra)
@@ -122,5 +125,3 @@ def  main():
 
 if __name__ == "__main__":
     main()
-
-

@@ -36,11 +36,11 @@ class ATEEvaluator(object):
         print('  ATE scale: {}'.format(s))
         error = np.sqrt(np.dot(trans_error,trans_error) / len(trans_error))
 
-        # align two trajs 
+        # align two trajs
         est_SEs = pos_quats2SE_matrices(est_traj)
-        T = np.eye(4) 
+        T = np.eye(4)
         T[:3,:3] = rot
-        T[:3,3:] = trans 
+        T[:3,3:] = trans
         T = np.linalg.inv(T)
         est_traj_aligned = []
         for se in est_SEs:
@@ -49,8 +49,7 @@ class ATEEvaluator(object):
             se_new = SE2pos_quat(se_new)
             est_traj_aligned.append(se_new)
 
-
-        return error, gt_traj, est_traj_aligned
+        return error, gt_traj, np.array(est_traj_aligned)
 
 # =======================
 
@@ -63,7 +62,7 @@ class RPEEvaluator(object):
 
     def evaluate(self, gt_SEs, est_SEs):
         result = evaluate_trajectory(gt_SEs, est_SEs)
-        
+
         trans_error = np.array(result)[:,2]
         rot_error = np.array(result)[:,3]
 
@@ -83,7 +82,7 @@ class KittiEvaluator(object):
         super(KittiEvaluator, self).__init__()
 
     # return rot_error, tra_error
-    def evaluate(self, gt_SEs, est_SEs):
+    def evaluate(self, gt_SEs, est_SEs, kittitype):
         # trajectory_scale(est_SEs, 0.831984631412)
-        error = kittievaluate(gt_SEs, est_SEs)
+        error = kittievaluate(gt_SEs, est_SEs, kittitype=kittitype)
         return error
