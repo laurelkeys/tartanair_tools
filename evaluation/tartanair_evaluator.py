@@ -18,8 +18,11 @@ class TartanAirEvaluator:
         scale = True: calculate a global scale
         """
         # load trajectories
-        gt_traj = np.loadtxt(gt_traj)
-        est_traj = np.loadtxt(est_traj)
+        try:
+            gt_traj = np.loadtxt(gt_traj)
+            est_traj = np.loadtxt(est_traj)
+        except:
+            pass
 
         if gt_traj.shape[0] != est_traj.shape[0]:
             raise Exception("POSEFILE_LENGTH_ILLEGAL")
