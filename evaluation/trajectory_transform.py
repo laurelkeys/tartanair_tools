@@ -133,7 +133,6 @@ def timestamp_associate(first_list, second_list, max_difference):
     Output:
     first_res: matched data from the first list
     second_res: matched data from the second list
-
     """
     first_dict = dict([(l[0],l[1:]) for l in first_list if len(l)>1])
     second_dict = dict([(l[0],l[1:]) for l in second_list if len(l)>1])

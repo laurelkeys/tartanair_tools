@@ -2,6 +2,7 @@
 # For License information please see the LICENSE file in the root directory.
 
 import numpy as np
+from contextlib import suppress
 from evaluator_base import ATEEvaluator, RPEEvaluator, KittiEvaluator, quats2SEs, transform_trajs
 
 # from trajectory_transform import timestamp_associate
@@ -13,11 +14,9 @@ class TartanAirEvaluator:
         scale = True: calculate a global scale
         """
         # load trajectories
-        try:
+        with suppress(TypeError):
             gt_traj = np.loadtxt(gt_traj)
             est_traj = np.loadtxt(est_traj)
-        except:
-            pass
 
         if gt_traj.shape[0] != est_traj.shape[0]:
             raise Exception("POSEFILE_LENGTH_ILLEGAL")
@@ -58,6 +57,5 @@ class TartanAirEvaluator:
 
 if __name__ == "__main__":
     # scale = True for monocular track, scale = False for stereo track
-    aicrowd_evaluator = TartanAirEvaluator()
-    result = aicrowd_evaluator.evaluate_one_trajectory("pose_gt.txt", "pose_est.txt", scale=True)
+    result = TartanAirEvaluator.evaluate_one_trajectory("pose_gt.txt", "pose_est.txt", scale=True)
     print(result)

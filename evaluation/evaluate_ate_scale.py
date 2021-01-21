@@ -47,7 +47,8 @@ trajectory and the estimated trajectory.
 import numpy
 
 def align(model,data,calc_scale=False):
-    """Align two trajectories using the method of Horn (closed-form).
+    """
+    Align two trajectories using the method of Horn (closed-form).
 
     Input:
     model -- first trajectory (3xn)
@@ -57,7 +58,6 @@ def align(model,data,calc_scale=False):
     rot -- rotation matrix (3x3)
     trans -- translation vector (3x1)
     trans_error -- translational error per point (1xn)
-
     """
     numpy.set_printoptions(precision=3,suppress=True)
     model_zerocentered = model - model.mean(1)
@@ -110,7 +110,6 @@ def plot_traj(ax,stamps,traj,style,color,label):
     style -- line style
     color -- line color
     label -- plot legend
-
     """
     stamps.sort()
     interval = numpy.median([s-t for s,t in zip(stamps[1:],stamps[:-1])])
